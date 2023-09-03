@@ -97,8 +97,8 @@ app.post("/order", async (req, res) => {
     total_amount: orderInfo?.total,
     currency: "BDT",
     tran_id: tran_id, // use unique tran_id for each api call
-    success_url: `http://localhost:5000/payment/success/${tran_id}`,
-    fail_url: "http://localhost:3030/fail",
+    success_url: `https://burger-week-server.vercel.app/payment/success/${tran_id}`,
+    fail_url: `https://burger-week-server.vercel.app/payment/fail/${tran_id}`,
     cancel_url: "http://localhost:3030/cancel",
     ipn_url: "http://localhost:3030/ipn",
     shipping_method: "Courier",
@@ -149,6 +149,14 @@ app.post("/order", async (req, res) => {
 res.redirect(`http://localhost:5173/payment/success/${req.params.tranId}`)
     }
   });
+
+  app.post("/payment/fail/:tranId", async (req, res) => {
+    const result = await orderCollection.deleteOne({transactionId: req.params.tranId})
+    if(result.deletedCount){
+      res.redirect(`http://localhost:5173/payment/fail/${req.params.tranId}`)
+    }
+  })
+
 });
 
 
